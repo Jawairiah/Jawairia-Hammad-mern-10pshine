@@ -1,8 +1,8 @@
-// src/server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
+const notesRoutes = require('./routes/notes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/notes', notesRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
