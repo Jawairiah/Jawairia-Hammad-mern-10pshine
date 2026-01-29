@@ -8,6 +8,8 @@ import {
   User,
   LogOut,
   StickyNote,
+  ArrowLeft,
+  Key,
 } from "lucide-react";
 
 import NotesContainer from "./components/NotesContainer";
@@ -82,16 +84,23 @@ const Input = ({ icon: Icon, error, ...props }) => (
   </div>
 );
 
-const Button = ({ children, loading, onClick }) => (
-  <button
-    onClick={onClick}
-    disabled={loading}
-    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-3 rounded-lg flex justify-center gap-2"
-  >
-    {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-    {children}
-  </button>
-);
+const Button = ({ children, loading, onClick, variant = "primary" }) => {
+  const styles = {
+    primary: "bg-blue-600 hover:bg-blue-700 text-white",
+    secondary: "bg-gray-200 hover:bg-gray-300 text-gray-800",
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading}
+      className={`w-full ${styles[variant]} disabled:bg-gray-400 py-3 rounded-lg flex justify-center gap-2 items-center`}
+    >
+      {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+      {children}
+    </button>
+  );
+};
 
 /* =========================
    SIGNUP
@@ -121,9 +130,26 @@ const SignUp = ({ onSuccess, onToggle }) => {
   return (
     <AuthLayout title="Create Account">
       {message && <Alert type={message.type}>{message.text}</Alert>}
-      <Input icon={User} placeholder="Username" onChange={(e) => setForm({ ...form, username: e.target.value })} />
-      <Input icon={Mail} placeholder="Email" onChange={(e) => setForm({ ...form, email: e.target.value })} />
-      <Input icon={Lock} type="password" placeholder="Password" onChange={(e) => setForm({ ...form, password: e.target.value })} />
+      <Input 
+        icon={User} 
+        placeholder="Username" 
+        value={form.username}
+        onChange={(e) => setForm({ ...form, username: e.target.value })} 
+      />
+      <Input 
+        icon={Mail} 
+        placeholder="Email" 
+        type="email"
+        value={form.email}
+        onChange={(e) => setForm({ ...form, email: e.target.value })} 
+      />
+      <Input 
+        icon={Lock} 
+        type="password" 
+        placeholder="Password" 
+        value={form.password}
+        onChange={(e) => setForm({ ...form, password: e.target.value })} 
+      />
       <Button loading={loading} onClick={handleSubmit}>Sign Up</Button>
       <ToggleText onToggle={onToggle} text="Already have an account?" action="Log in" />
     </AuthLayout>
@@ -133,7 +159,7 @@ const SignUp = ({ onSuccess, onToggle }) => {
 /* =========================
    LOGIN
 ========================= */
-const Login = ({ onSuccess, onToggle }) => {
+const Login = ({ onSuccess, onToggle, onForgotPassword }) => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
@@ -158,10 +184,151 @@ const Login = ({ onSuccess, onToggle }) => {
   return (
     <AuthLayout title="Welcome Back">
       {message && <Alert type={message.type}>{message.text}</Alert>}
-      <Input icon={Mail} placeholder="Email" onChange={(e) => setForm({ ...form, email: e.target.value })} />
-      <Input icon={Lock} type="password" placeholder="Password" onChange={(e) => setForm({ ...form, password: e.target.value })} />
+      <Input 
+        icon={Mail} 
+        placeholder="Email" 
+        type="email"
+        value={form.email}
+        onChange={(e) => setForm({ ...form, email: e.target.value })} 
+      />
+      <Input 
+        icon={Lock} 
+        type="password" 
+        placeholder="Password" 
+        value={form.password}
+        onChange={(e) => setForm({ ...form, password: e.target.value })} 
+      />
+      <button
+        onClick={onForgotPassword}
+        className="text-sm text-blue-600 hover:text-blue-700 text-right w-full"
+      >
+        Forgot password?
+      </button>
       <Button loading={loading} onClick={handleSubmit}>Log In</Button>
       <ToggleText onToggle={onToggle} text="Don't have an account?" action="Sign up" />
+    </AuthLayout>
+  );
+};
+
+/* =========================
+   FORGOT PASSWORD
+========================= */
+const ForgotPassword = ({ onBack, onSuccess }) => {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setMessage(null);
+    try {
+      const data = await api("/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      });
+      setMessage({ type: "success", text: data.message });
+      setTimeout(() => onSuccess(email), 2000);
+    } catch (err) {
+      setMessage({ type: "error", text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <AuthLayout title="Forgot Password">
+      <button
+        onClick={onBack}
+        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-2"
+      >
+        <ArrowLeft size={16} />
+        Back to login
+      </button>
+      {message && <Alert type={message.type}>{message.text}</Alert>}
+      <p className="text-sm text-gray-600 mb-4">
+        Enter your email address and we'll send you an OTP to reset your password.
+      </p>
+      <Input 
+        icon={Mail} 
+        placeholder="Email" 
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)} 
+      />
+      <Button loading={loading} onClick={handleSubmit}>Send OTP</Button>
+    </AuthLayout>
+  );
+};
+
+/* =========================
+   RESET PASSWORD
+========================= */
+const ResetPassword = ({ email, onBack, onSuccess }) => {
+  const [form, setForm] = useState({ otp: "", newPassword: "", confirmPassword: "" });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const handleSubmit = async () => {
+    if (form.newPassword !== form.confirmPassword) {
+      setMessage({ type: "error", text: "Passwords do not match" });
+      return;
+    }
+
+    setLoading(true);
+    setMessage(null);
+    try {
+      const data = await api("/reset-password", {
+        method: "POST",
+        body: JSON.stringify({ 
+          email, 
+          otp: form.otp, 
+          newPassword: form.newPassword 
+        }),
+      });
+      setMessage({ type: "success", text: data.message });
+      setTimeout(() => onSuccess(), 2000);
+    } catch (err) {
+      setMessage({ type: "error", text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <AuthLayout title="Reset Password">
+      <button
+        onClick={onBack}
+        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-2"
+      >
+        <ArrowLeft size={16} />
+        Back
+      </button>
+      {message && <Alert type={message.type}>{message.text}</Alert>}
+      <p className="text-sm text-gray-600 mb-4">
+        Enter the OTP sent to <strong>{email}</strong>
+      </p>
+      <Input 
+        icon={Key} 
+        placeholder="Enter 6-digit OTP" 
+        maxLength={6}
+        value={form.otp}
+        onChange={(e) => setForm({ ...form, otp: e.target.value.replace(/\D/g, '') })} 
+      />
+      <Input 
+        icon={Lock} 
+        type="password" 
+        placeholder="New Password" 
+        value={form.newPassword}
+        onChange={(e) => setForm({ ...form, newPassword: e.target.value })} 
+      />
+      <Input 
+        icon={Lock} 
+        type="password" 
+        placeholder="Confirm New Password" 
+        value={form.confirmPassword}
+        onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} 
+      />
+      <Button loading={loading} onClick={handleSubmit}>Reset Password</Button>
     </AuthLayout>
   );
 };
@@ -192,7 +359,7 @@ const Dashboard = ({ user, onLogout }) => (
    SHARED AUTH LAYOUT
 ========================= */
 const AuthLayout = ({ title, children }) => (
-  <div className="min-h-screen flex items-center justify-center">
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
     <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md space-y-4">
       <h2 className="text-2xl font-bold text-center">{title}</h2>
       {children}
@@ -203,7 +370,7 @@ const AuthLayout = ({ title, children }) => (
 const ToggleText = ({ text, action, onToggle }) => (
   <p className="text-center text-sm">
     {text}{" "}
-    <button onClick={onToggle} className="text-blue-600 font-medium">
+    <button onClick={onToggle} className="text-blue-600 font-medium hover:underline">
       {action}
     </button>
   </p>
@@ -216,6 +383,7 @@ export default function App() {
   const [view, setView] = useState("login");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [resetEmail, setResetEmail] = useState("");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -240,10 +408,43 @@ export default function App() {
     );
 
   if (view === "login")
-    return <Login onSuccess={(u) => { setUser(u); setView("dashboard"); }} onToggle={() => setView("signup")} />;
+    return (
+      <Login 
+        onSuccess={(u) => { setUser(u); setView("dashboard"); }} 
+        onToggle={() => setView("signup")} 
+        onForgotPassword={() => setView("forgot-password")}
+      />
+    );
 
   if (view === "signup")
-    return <SignUp onSuccess={(u) => { setUser(u); setView("dashboard"); }} onToggle={() => setView("login")} />;
+    return (
+      <SignUp 
+        onSuccess={(u) => { setUser(u); setView("dashboard"); }} 
+        onToggle={() => setView("login")} 
+      />
+    );
 
-  return <Dashboard user={user} onLogout={() => { setAuthToken(null); setUser(null); setView("login"); }} />;
+  if (view === "forgot-password")
+    return (
+      <ForgotPassword
+        onBack={() => setView("login")}
+        onSuccess={(email) => { setResetEmail(email); setView("reset-password"); }}
+      />
+    );
+
+  if (view === "reset-password")
+    return (
+      <ResetPassword
+        email={resetEmail}
+        onBack={() => setView("forgot-password")}
+        onSuccess={() => setView("login")}
+      />
+    );
+
+  return (
+    <Dashboard 
+      user={user} 
+      onLogout={() => { setAuthToken(null); setUser(null); setView("login"); }} 
+    />
+  );
 }
