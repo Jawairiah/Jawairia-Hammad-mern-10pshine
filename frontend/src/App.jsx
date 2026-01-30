@@ -10,9 +10,11 @@ import {
   StickyNote,
   ArrowLeft,
   Key,
+  UserCircle,
 } from "lucide-react";
 
 import NotesContainer from "./components/NotesContainer";
+import ProfileModal from "./components/ProfileModal";
 
 const API_URL = "http://localhost:5000/api/auth";
 
@@ -336,24 +338,47 @@ const ResetPassword = ({ email, onBack, onSuccess }) => {
 /* =========================
    DASHBOARD
 ========================= */
-const Dashboard = ({ user, onLogout }) => (
-  <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <header className="max-w-6xl mx-auto p-6 flex justify-between items-center bg-white shadow rounded-lg mt-6">
-      <div className="flex items-center gap-3">
-        <StickyNote className="text-blue-600" />
-        <div>
-          <h1 className="font-bold">Notes App</h1>
-          <p className="text-sm">Welcome, {user.username}</p>
-        </div>
-      </div>
-      <button onClick={onLogout} className="bg-red-600 text-white px-4 py-2 rounded-lg flex gap-2">
-        <LogOut size={16} /> Logout
-      </button>
-    </header>
+const Dashboard = ({ user, onLogout, onUpdateUser }) => {
+  const [showProfile, setShowProfile] = useState(false);
 
-    <NotesContainer />
-  </div>
-);
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <header className="max-w-6xl mx-auto p-6 flex justify-between items-center bg-white shadow rounded-lg mt-6">
+        <div className="flex items-center gap-3">
+          <StickyNote className="text-blue-600" />
+          <div>
+            <h1 className="font-bold">Notes App</h1>
+            <p className="text-sm">Welcome, {user.username}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setShowProfile(true)} 
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex gap-2 hover:bg-blue-700 transition"
+          >
+            <UserCircle size={20} /> Profile
+          </button>
+          <button 
+            onClick={onLogout} 
+            className="bg-red-600 text-white px-4 py-2 rounded-lg flex gap-2 hover:bg-red-700 transition"
+          >
+            <LogOut size={16} /> Logout
+          </button>
+        </div>
+      </header>
+
+      <NotesContainer />
+
+      {showProfile && (
+        <ProfileModal
+          user={user}
+          onClose={() => setShowProfile(false)}
+          onUpdate={onUpdateUser}
+        />
+      )}
+    </div>
+  );
+};
 
 /* =========================
    SHARED AUTH LAYOUT
@@ -444,7 +469,8 @@ export default function App() {
   return (
     <Dashboard 
       user={user} 
-      onLogout={() => { setAuthToken(null); setUser(null); setView("login"); }} 
+      onLogout={() => { setAuthToken(null); setUser(null); setView("login"); }}
+      onUpdateUser={(updatedUser) => setUser(updatedUser)}
     />
   );
 }
