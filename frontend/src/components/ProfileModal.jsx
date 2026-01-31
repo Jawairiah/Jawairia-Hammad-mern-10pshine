@@ -11,6 +11,8 @@ import {
   Eye,
   EyeOff,
   Calendar,
+  Leaf,
+  Shield,
 } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000/api';
@@ -176,94 +178,104 @@ const ProfileModal = ({ user, onClose, onUpdate }) => {
 
   const Alert = ({ type, children }) => {
     const styles = {
-      success: 'bg-green-50 border-green-200 text-green-800',
+      success: 'bg-sage-50 border-sage-300 text-sage-800',
       error: 'bg-red-50 border-red-200 text-red-800',
     };
 
     const icons = {
-      success: <CheckCircle className="w-5 h-5" />,
-      error: <AlertCircle className="w-5 h-5" />,
+      success: <CheckCircle className="w-5 h-5 flex-shrink-0" />,
+      error: <AlertCircle className="w-5 h-5 flex-shrink-0" />,
     };
 
     return (
-      <div className={`flex gap-3 p-4 border rounded-lg ${styles[type]} mb-4`}>
+      <div className={`flex gap-3 p-4 border-2 rounded-2xl ${styles[type]} mb-4 fade-in`}>
         {icons[type]}
-        <div>{children}</div>
+        <div className="text-sm">{children}</div>
       </div>
     );
   };
 
   const Input = ({ icon: Icon, error, type = 'text', ...props }) => (
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
+    <div className="space-y-2">
+      <label className="text-sm font-semibold text-sage-800 px-1">
         {props.label}
       </label>
       <div className="relative">
         {Icon && (
-          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-sage-400" />
         )}
         <input
           {...props}
           type={type}
           className={`w-full ${
-            Icon ? 'pl-10' : 'pl-4'
-          } pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-            error ? 'border-red-300' : 'border-gray-300'
-          }`}
+            Icon ? 'pl-12' : 'pl-4'
+          } pr-4 py-3.5 bg-warm-white border-2 rounded-2xl focus:ring-2 focus:ring-sage-300 focus:border-sage-500 outline-none ${
+            error ? 'border-red-300' : 'border-sage-200'
+          } placeholder:text-sage-300`}
         />
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-600 px-1">{error}</p>}
     </div>
   );
 
   const PasswordInput = ({ icon: Icon, error, showPassword, toggleShow, ...props }) => (
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
+    <div className="space-y-2">
+      <label className="text-sm font-semibold text-sage-800 px-1">
         {props.label}
       </label>
       <div className="relative">
         {Icon && (
-          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-sage-400" />
         )}
         <input
           {...props}
           type={showPassword ? 'text' : 'password'}
           className={`w-full ${
-            Icon ? 'pl-10' : 'pl-4'
-          } pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-            error ? 'border-red-300' : 'border-gray-300'
-          }`}
+            Icon ? 'pl-12' : 'pl-4'
+          } pr-12 py-3.5 bg-warm-white border-2 rounded-2xl focus:ring-2 focus:ring-sage-300 focus:border-sage-500 outline-none ${
+            error ? 'border-red-300' : 'border-sage-200'
+          } placeholder:text-sage-300`}
         />
         <button
           type="button"
           onClick={toggleShow}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-sage-400 hover:text-sage-600 transition"
         >
           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
         </button>
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-600 px-1">{error}</p>}
     </div>
   );
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-sage-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 fade-in">
+      <div className="bg-warm-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 border-sage-100">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
-          <div className="flex items-center justify-between">
+        <div className="bg-gradient-to-br from-sage-600 to-sage-700 text-white p-8 relative overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute top-4 right-4 opacity-10">
+            <Leaf className="w-20 h-20 transform rotate-12" />
+          </div>
+          <div className="absolute bottom-4 left-4 opacity-10">
+            <Leaf className="w-16 h-16 transform -rotate-45" />
+          </div>
+          
+          <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
                 <User className="w-8 h-8" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold">{user.username}</h2>
-                <p className="text-blue-100 text-sm">{user.email}</p>
+                <h2 className="text-2xl font-bold" style={{ fontFamily: 'Crimson Pro, serif' }}>
+                  {user.username}
+                </h2>
+                <p className="text-sage-100 text-sm">{user.email}</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition"
+              className="text-white hover:bg-white/20 p-2.5 rounded-2xl transition"
             >
               <X className="w-6 h-6" />
             </button>
@@ -271,43 +283,51 @@ const ProfileModal = ({ user, onClose, onUpdate }) => {
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200">
+        <div className="border-b-2 border-sage-100 bg-sage-50/30">
           <div className="flex">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`flex-1 px-6 py-4 font-medium transition ${
+              className={`flex-1 px-6 py-4 font-semibold transition-all ${
                 activeTab === 'profile'
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  ? 'text-sage-700 border-b-2 border-sage-600 bg-warm-white'
+                  : 'text-sage-500 hover:text-sage-700 hover:bg-sage-50'
               }`}
             >
-              Profile Details
+              <div className="flex items-center justify-center gap-2">
+                <User className="w-5 h-5" />
+                Profile Details
+              </div>
             </button>
             <button
               onClick={() => setActiveTab('password')}
-              className={`flex-1 px-6 py-4 font-medium transition ${
+              className={`flex-1 px-6 py-4 font-semibold transition-all ${
                 activeTab === 'password'
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  ? 'text-sage-700 border-b-2 border-sage-600 bg-warm-white'
+                  : 'text-sage-500 hover:text-sage-700 hover:bg-sage-50'
               }`}
             >
-              Change Password
+              <div className="flex items-center justify-center gap-2">
+                <Shield className="w-5 h-5" />
+                Change Password
+              </div>
             </button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+        <div className="p-8 overflow-y-auto max-h-[calc(90vh-280px)]">
           {message && <Alert type={message.type}>{message.text}</Alert>}
 
           {/* Profile Tab */}
           {activeTab === 'profile' && (
-            <div className="space-y-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-blue-600" />
+            <div className="space-y-6 fade-in">
+              <div className="bg-sage-50 border-2 border-sage-200 rounded-2xl p-5 flex items-center gap-4">
+                <div className="bg-sage-100 p-3 rounded-2xl">
+                  <Calendar className="w-6 h-6 text-sage-700" />
+                </div>
                 <div>
-                  <p className="text-sm text-gray-600">Member since</p>
-                  <p className="font-medium text-gray-800">
+                  <p className="text-sm text-sage-600 font-medium">Member since</p>
+                  <p className="font-semibold text-sage-800" style={{ fontFamily: 'Crimson Pro, serif' }}>
                     {formatDate(user.created_at)}
                   </p>
                 </div>
@@ -341,7 +361,7 @@ const ProfileModal = ({ user, onClose, onUpdate }) => {
               <button
                 onClick={handleUpdateProfile}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium px-6 py-3 rounded-lg transition flex items-center justify-center gap-2"
+                className="w-full bg-sage-600 hover:bg-sage-700 disabled:bg-sage-300 text-white font-semibold px-6 py-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
               >
                 {loading ? (
                   <>
@@ -360,11 +380,19 @@ const ProfileModal = ({ user, onClose, onUpdate }) => {
 
           {/* Password Tab */}
           {activeTab === 'password' && (
-            <div className="space-y-6">
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-sm text-yellow-800">
-                  <strong>Security Note:</strong> Choose a strong password with at least 6 characters.
-                </p>
+            <div className="space-y-6 fade-in">
+              <div className="bg-sky-50 border-2 border-sky-200 rounded-2xl p-5 flex items-start gap-4">
+                <div className="bg-sky-100 p-2 rounded-xl flex-shrink-0">
+                  <Shield className="w-5 h-5 text-sky-700" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-sky-800 mb-1">
+                    Security Note
+                  </p>
+                  <p className="text-sm text-sky-700">
+                    Choose a strong password with at least 6 characters to keep your account secure.
+                  </p>
+                </div>
               </div>
 
               <PasswordInput
@@ -412,7 +440,7 @@ const ProfileModal = ({ user, onClose, onUpdate }) => {
               <button
                 onClick={handleChangePassword}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium px-6 py-3 rounded-lg transition flex items-center justify-center gap-2"
+                className="w-full bg-sage-600 hover:bg-sage-700 disabled:bg-sage-300 text-white font-semibold px-6 py-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
               >
                 {loading ? (
                   <>
