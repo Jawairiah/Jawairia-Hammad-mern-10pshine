@@ -8,7 +8,10 @@ import {
   X,
   Loader2,
   FileText,
-  StickyNote as NoteIcon,
+  Leaf,
+  Mountain,
+  Trees,
+  Flower2,
 } from 'lucide-react';
 import NoteEditor from './NoteEditor';
 
@@ -174,7 +177,7 @@ const NotesContainer = () => {
     });
   };
 
-  const getPreviewText = (html, maxLength = 150) => {
+  const getPreviewText = (html, maxLength = 120) => {
     const text = stripHtml(html);
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
@@ -195,15 +198,28 @@ const NotesContainer = () => {
     );
   }
 
+  // Get random nature icon for note cards
+  const getNatureIcon = (index) => {
+    const icons = [
+      <Leaf className="w-5 h-5 text-sage-600" />,
+      <Flower2 className="w-5 h-5 text-sage-600" />,
+      <Trees className="w-5 h-5 text-moss-600" />,
+      <Mountain className="w-5 h-5 text-sage-600" />,
+    ];
+    return icons[index % icons.length];
+  };
+
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6 pb-12">
       {/* Header with Search and Create Button */}
-      <div className="mb-8 space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-3xl font-bold text-gray-800">My Notes</h2>
+      <div className="mb-8 space-y-5 fade-in">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <h2 className="text-3xl font-bold text-sage-800" style={{ fontFamily: 'Crimson Pro, serif' }}>
+            Your Reflections
+          </h2>
           <button
             onClick={() => setIsCreatingNew(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition shadow-lg hover:shadow-xl"
+            className="bg-sage-600 hover:bg-sage-700 text-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg font-medium"
           >
             <Plus className="w-5 h-5" />
             New Note
@@ -212,18 +228,18 @@ const NotesContainer = () => {
 
         {/* Search Bar */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-sage-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search notes by title or content..."
-            className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition text-lg"
+            placeholder="Search through your notes..."
+            className="w-full pl-14 pr-14 py-4 border-2 border-sage-200 bg-warm-white rounded-2xl focus:border-sage-400 focus:ring-2 focus:ring-sage-200 outline-none transition text-base placeholder:text-sage-300"
           />
           {searchQuery && (
             <button
               onClick={clearSearch}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-sage-400 hover:text-sage-600 transition"
             >
               <X className="w-5 h-5" />
             </button>
@@ -232,56 +248,62 @@ const NotesContainer = () => {
 
         {/* Search Results Info */}
         {searchQuery && (
-          <div className="text-sm text-gray-600">
-            Found {filteredNotes.length} {filteredNotes.length === 1 ? 'note' : 'notes'} matching "{searchQuery}"
+          <div className="text-sm text-sage-600 px-2">
+            Found {filteredNotes.length} {filteredNotes.length === 1 ? 'note' : 'notes'} matching "<span className="font-medium">{searchQuery}</span>"
           </div>
         )}
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-          {error}
+        <div className="mb-6 bg-red-50 border-2 border-red-200 text-red-700 px-5 py-4 rounded-2xl fade-in">
+          <p className="font-medium">{error}</p>
         </div>
       )}
 
       {/* Loading State */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mb-4" />
-          <p className="text-gray-600">Loading your notes...</p>
+        <div className="flex flex-col items-center justify-center py-24">
+          <div className="relative mb-4">
+            <Leaf className="w-14 h-14 text-sage-400 gentle-pulse" />
+          </div>
+          <p className="text-sage-600 font-medium">Gathering your notes...</p>
         </div>
       ) : filteredNotes.length === 0 ? (
         /* Empty State */
-        <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="flex flex-col items-center justify-center py-24 text-center fade-in">
           {searchQuery ? (
             <>
-              <Search className="w-16 h-16 text-gray-300 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+              <div className="bg-sage-50 p-6 rounded-3xl mb-5">
+                <Search className="w-16 h-16 text-sage-300" />
+              </div>
+              <h3 className="text-2xl font-semibold text-sage-700 mb-3" style={{ fontFamily: 'Crimson Pro, serif' }}>
                 No notes found
               </h3>
-              <p className="text-gray-500 mb-6">
-                Try a different search term or create a new note
+              <p className="text-sage-600 mb-6 max-w-md">
+                We couldn't find any notes matching your search. Try different keywords or create a new note.
               </p>
               <button
                 onClick={clearSearch}
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sage-700 hover:text-sage-900 font-semibold hover:underline"
               >
                 Clear search
               </button>
             </>
           ) : (
             <>
-              <FileText className="w-16 h-16 text-gray-300 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                No notes yet
+              <div className="bg-sage-50 p-6 rounded-3xl mb-5">
+                <Trees className="w-16 h-16 text-sage-400" />
+              </div>
+              <h3 className="text-2xl font-semibold text-sage-700 mb-3" style={{ fontFamily: 'Crimson Pro, serif' }}>
+                Your forest awaits
               </h3>
-              <p className="text-gray-500 mb-6">
-                Start creating your first note to get started!
+              <p className="text-sage-600 mb-8 max-w-md">
+                Start your journey by planting your first note. Let your thoughts grow and flourish.
               </p>
               <button
                 onClick={() => setIsCreatingNew(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition"
+                className="bg-sage-600 hover:bg-sage-700 text-white px-8 py-4 rounded-2xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg font-medium"
               >
                 <Plus className="w-5 h-5" />
                 Create First Note
@@ -291,42 +313,49 @@ const NotesContainer = () => {
         </div>
       ) : (
         /* Notes Grid */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredNotes.map((note) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredNotes.map((note, index) => (
             <div
               key={note.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
+              className="bg-warm-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border-2 border-sage-100 relative stagger-item"
             >
+              {/* Subtle corner decoration */}
+              <div className="absolute top-3 right-3 opacity-[0.08]">
+                {getNatureIcon(index)}
+              </div>
+              
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <NoteIcon className="w-5 h-5 text-blue-600" />
-                    <h3 className="text-lg font-bold text-gray-800 line-clamp-1">
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="bg-sage-50 p-2 rounded-xl mt-0.5">
+                      {getNatureIcon(index)}
+                    </div>
+                    <h3 className="text-lg font-semibold text-sage-800 line-clamp-2 flex-1" style={{ fontFamily: 'Crimson Pro, serif' }}>
                       {note.title}
                     </h3>
                   </div>
                 </div>
 
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                <p className="text-sage-600 text-sm mb-4 line-clamp-3 leading-relaxed">
                   {getPreviewText(note.content)}
                 </p>
 
-                <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                <div className="flex items-center gap-2 text-xs text-sage-500 mb-5 font-medium">
                   <Calendar className="w-4 h-4" />
                   <span>{formatDate(note.updated_at || note.created_at)}</span>
                 </div>
 
-                <div className="flex gap-2 pt-4 border-t border-gray-100">
+                <div className="flex gap-2.5 pt-4 border-t-2 border-sage-50">
                   <button
                     onClick={() => setEditingNote(note)}
-                    className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition"
+                    className="flex-1 bg-sage-50 hover:bg-sage-100 text-sage-700 px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all font-medium"
                   >
                     <Edit className="w-4 h-4" />
                     Edit
                   </button>
                   <button
                     onClick={() => setDeleteConfirm(note.id)}
-                    className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg flex items-center justify-center gap-2 transition"
+                    className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all font-medium"
                   >
                     <Trash2 className="w-4 h-4" />
                     Delete
@@ -340,24 +369,31 @@ const NotesContainer = () => {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
-            <h3 className="text-xl font-bold mb-4">Delete Note?</h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete this note? This action cannot be undone.
-            </p>
+        <div className="fixed inset-0 bg-sage-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 fade-in">
+          <div className="bg-warm-white rounded-3xl p-8 max-w-md w-full shadow-2xl border-2 border-sage-100">
+            <div className="text-center mb-6">
+              <div className="bg-red-50 p-4 rounded-2xl inline-block mb-4">
+                <Trash2 className="w-10 h-10 text-red-600" />
+              </div>
+              <h3 className="text-2xl font-bold mb-2 text-sage-800" style={{ fontFamily: 'Crimson Pro, serif' }}>
+                Delete this note?
+              </h3>
+              <p className="text-sage-600">
+                This action cannot be undone. Your note will be permanently removed from your collection.
+              </p>
+            </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-3 rounded-lg transition"
+                className="flex-1 bg-sage-100 hover:bg-sage-200 text-sage-800 px-4 py-3 rounded-2xl transition-all font-medium"
               >
-                Cancel
+                Keep Note
               </button>
               <button
                 onClick={() => handleDeleteNote(deleteConfirm)}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition"
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-2xl transition-all font-medium shadow-md"
               >
-                Delete
+                Delete Forever
               </button>
             </div>
           </div>
