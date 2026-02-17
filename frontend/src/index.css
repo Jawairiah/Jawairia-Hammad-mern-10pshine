@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Nature-inspired Color Palette */
+  --sage-50: #f7f9f7;
+  --sage-100: #eef2ee;
+  --sage-200: #dbe5db;
+  --sage-300: #b8cdb8;
+  --sage-400: #8fb18f;
+  --sage-500: #6b9370;
+  --sage-600: #527a59;
+  --sage-700: #3f5e45;
+  --sage-800: #2d4433;
+  
+  --moss-50: #f5f7f3;
+  --moss-100: #e8ede3;
+  --moss-200: #d2dcc9;
+  --moss-300: #a9bfa0;
+  --moss-400: #7d9872;
+  --moss-500: #5a7a51;
+  --moss-600: #46603f;
+  --moss-700: #384d33;
+  
+  --sky-50: #f0f7fa;
+  --sky-100: #deeef5;
+  --sky-200: #c5e3ed;
+  --sky-300: #9dcfe0;
+  --sky-400: #6db3cb;
+  --sky-500: #4a97b3;
+  --sky-600: #3a7a95;
+  
+  --cream: #fdfbf7;
+  --warm-white: #faf9f6;
+  --paper: #f8f6f1;
+  
+  /* Semantic Colors */
+  --background: var(--warm-white);
+  --surface: var(--cream);
+  --primary: var(--sage-600);
+  --primary-hover: var(--sage-700);
+  --secondary: var(--moss-500);
+  --accent: var(--sky-500);
+  --text-primary: #2d3e2f;
+  --text-secondary: #5a6b5c;
+  --text-muted: #8a9b8c;
+  --border: var(--sage-200);
+  --border-light: var(--sage-100);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--background);
+  color: var(--text-primary);
+  position: relative;
+}
+
+/* Subtle paper texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    );
+  z-index: 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--sage-50);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sage-300);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sage-400);
+}
+
+/* Smooth animations */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+button, input, textarea {
+  transition: all 0.2s ease;
+}
+
+/* Nature decorations */
+.nature-corner-leaf {
+  position: absolute;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.leaf-decoration {
+  color: var(--sage-300);
+}
+
+/* Floating animation for subtle movement */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Stagger animation for lists */
+.stagger-item {
+  animation: fadeIn 0.4s ease-out backwards;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0.05s; }
+.stagger-item:nth-child(2) { animation-delay: 0.1s; }
+.stagger-item:nth-child(3) { animation-delay: 0.15s; }
+.stagger-item:nth-child(4) { animation-delay: 0.2s; }
+.stagger-item:nth-child(5) { animation-delay: 0.25s; }
+.stagger-item:nth-child(6) { animation-delay: 0.3s; }
+.stagger-item:nth-child(7) { animation-delay: 0.35s; }
+.stagger-item:nth-child(8) { animation-delay: 0.4s; }
+.stagger-item:nth-child(9) { animation-delay: 0.45s; }
+
+/* Gentle pulse */
+@keyframes gentlePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.gentle-pulse {
+  animation: gentlePulse 2s ease-in-out infinite;
+}
